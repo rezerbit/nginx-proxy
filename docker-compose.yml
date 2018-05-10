@@ -21,6 +21,7 @@ services:
   gen:
     restart: always
     image: jwilder/docker-gen
+    container_name: nginx-proxy-gen
     depends_on:
       - nginx
     volumes:
@@ -39,6 +40,7 @@ services:
   letsencrypt:
     restart: always
     image: jrcs/letsencrypt-nginx-proxy-companion
+    container_name: nginx-proxy-le
     depends_on:
       - nginx
       - gen
@@ -49,8 +51,8 @@ services:
       - /usr/share/nginx/html:/usr/share/nginx/html
       - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
-      NGINX_PROXY_CONTAINER: nginx
-      NGINX_DOCKER_GEN_CONTAINER: gen
+      NGINX_PROXY_CONTAINER: nginx-proxy
+      NGINX_DOCKER_GEN_CONTAINER: nginx-proxy-gen
     logging:
       options:
         max-size: ${NGINX_LETSENCRYPT_LOG_MAX_SIZE:-2m}
